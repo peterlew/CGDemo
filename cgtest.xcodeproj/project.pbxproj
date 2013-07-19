@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D04724B51797022100477CFC /* Cg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04724B41797022100477CFC /* Cg.framework */; };
 		D104A5F91794792E006BF235 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D104A5F81794792E006BF235 /* main.cpp */; };
 		D104A5FB1794792E006BF235 /* cgtest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = D104A5FA1794792E006BF235 /* cgtest.1 */; };
 		D104A60317947D8B006BF235 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D104A60117947D8B006BF235 /* GLUT.framework */; };
 		D104A60417947D8B006BF235 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D104A60217947D8B006BF235 /* OpenGL.framework */; };
+		D191BB801799D4AC007F1040 /* Cg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D191BB7F1799D4AC007F1040 /* Cg.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,13 +29,15 @@
 
 /* Begin PBXFileReference section */
 		D04724B3179700A000477CFC /* changes.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.log; sourceTree = "<group>"; };
-		D04724B41797022100477CFC /* Cg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cg.framework; path = "../../../../../Applications/Max5/Cycling '74/jitter-externals/Cg.framework"; sourceTree = "<group>"; };
 		D0AD25A117978F95001BEDEC /* GenIter.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GenIter.cg; sourceTree = "<group>"; };
 		D104A5F51794792E006BF235 /* cgtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D104A5F81794792E006BF235 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D104A5FA1794792E006BF235 /* cgtest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = cgtest.1; sourceTree = "<group>"; };
 		D104A60117947D8B006BF235 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../../../System/Library/Frameworks/GLUT.framework; sourceTree = "<group>"; };
 		D104A60217947D8B006BF235 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = ../../../../../System/Library/Frameworks/OpenGL.framework; sourceTree = "<group>"; };
+		D191BB7F1799D4AC007F1040 /* Cg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cg.framework; path = ../../dev/Shared/support/Cg/mac/Cg.framework; sourceTree = "<group>"; };
+		D191BB811799DB78007F1040 /* ptsList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ptsList.txt; sourceTree = "<group>"; };
+		D191BB831799E47D007F1040 /* cg_0_1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_0_1.txt; sourceTree = "<group>"; };
 		D1CD76DC1795AFBE00479161 /* Mandel.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Mandel.cg; sourceTree = "<group>"; };
 		D1CD76DD1795D35A00479161 /* Ship.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ship.cg; sourceTree = "<group>"; };
 		D1CD76DE1795D9D800479161 /* Nova.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Nova.cg; sourceTree = "<group>"; };
@@ -51,7 +53,7 @@
 			files = (
 				D104A60317947D8B006BF235 /* GLUT.framework in Frameworks */,
 				D104A60417947D8B006BF235 /* OpenGL.framework in Frameworks */,
-				D04724B51797022100477CFC /* Cg.framework in Frameworks */,
+				D191BB801799D4AC007F1040 /* Cg.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +63,8 @@
 		D104A5EC1794792E006BF235 = {
 			isa = PBXGroup;
 			children = (
+				D191BB831799E47D007F1040 /* cg_0_1.txt */,
+				D191BB811799DB78007F1040 /* ptsList.txt */,
 				D04724B3179700A000477CFC /* changes.log */,
 				D1CD76DD1795D35A00479161 /* Ship.cg */,
 				D0AD25A117978F95001BEDEC /* GenIter.cg */,
@@ -69,7 +73,7 @@
 				D1D01BD31794BE52007F095F /* Pass.cg */,
 				D1D01BD21794B92A007F095F /* Newton.cg */,
 				D1D01BD11794A2FF007F095F /* Julia.cg */,
-				D04724B41797022100477CFC /* Cg.framework */,
+				D191BB7F1799D4AC007F1040 /* Cg.framework */,
 				D104A60117947D8B006BF235 /* GLUT.framework */,
 				D104A60217947D8B006BF235 /* OpenGL.framework */,
 				D104A5F71794792E006BF235 /* cgtest */,
@@ -221,6 +225,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../dev/Shared/support/Cg/mac\"",
 					"\"$(SYSTEM_APPS_DIR)/Max5/Cycling '74/jitter-externals\"",
+					"\"$(SRCROOT)/../../dev/Shared/support/Cg/mac\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -234,6 +239,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/../../../dev/Shared/support/Cg/mac\"",
 					"\"$(SYSTEM_APPS_DIR)/Max5/Cycling '74/jitter-externals\"",
+					"\"$(SRCROOT)/../../dev/Shared/support/Cg/mac\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

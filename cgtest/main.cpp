@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <GLUT/GLUT.h>
-#include <Cg/Cg.h>
+#include <Cg/cg.h>
 #include <Cg/cgGL.h>
 #include <unistd.h>
 #include <math.h>
@@ -54,7 +54,7 @@ bool mouseU = false;
 bool mouseD = false;
 
 float var1 = 0.0;
-float var2 = 0.0;
+float var2 = 10;
 float var3 = 0.0;
 
 bool var1up = false;
@@ -64,6 +64,10 @@ bool var1down = false;
 bool var2down = false;
 bool var3down = false;
 
+bool hunting = false;
+
+bool h1, h2, h3 = false;
+
 CGprofile f_prof, v_prof;
 
 struct Position{
@@ -71,25 +75,90 @@ struct Position{
 	float py;
 	float z;
 	float v1;
-	float time;
-	int listLen;
 };
 
-void fillPoint(Position *p, float x, float y, float z, float v, float t, int l)
+void fillPoint(Position *p, char *s)
 {
-	p->px = x;
-	p->py = y;
-	p->z = z;
-	p->v1 = v;
-	p->time = t;
-	p->listLen = l;
+    int i = 0;
+    //Ignore point number
+    while(s[i++] != ' ');
+	p->px = atof(s + i);
+    while(s[i++] != ' ');
+	p->py = atof(s + i);
+    while(s[i++] != ' ');
+	p->z = atof(s + i);
+    while(s[i++] != ' ');
+	p->v1 = atof(s + i);
 }
 
-Position *posList;
+Position posList[20];
 int posIndex = 0;
+int posLen = 0;
+float ptTime = 5.0;
+
+FILE *pts;
+char fileName[11];
+
+//a sanity check - two high-zoom points shouldn't be adjacent unless they're very close
+bool isWellOrdered(Position *pl)
+{
+    Position pos, posN;
+    for(int i = 0; i < posLen - 1; i++){
+        pos = pl[i];
+        posN = pl[i+1];
+        if( pos.z + posN.z < 0.02 && (abs(pos.px - posN.px) > 0.1 || abs(pos.py - posN.py) > 0.1))
+            return false;
+    }
+    return true;
+}
 
 int main( int argc, char **argv )
 {
+    //Populate point list, pick scenes
+    
+    int scene1 = 0;
+    int scene2 = 1;
+    
+    sprintf(fileName, "cg_%d_%d.txt", scene1, scene2);
+    fileName[10] = '\0';
+    
+    chdir("/Users/plewis/Desktop/CGDemo");
+    if((pts = fopen(fileName, "r")) == NULL){
+        printf("Couldn't open file: %s\n", fileName);
+        exit(EXIT_FAILURE);
+    }
+    char *ln;
+    size_t sz;
+    while((ln = fgetln(pts, &sz)) != NULL)
+    {
+        fillPoint(&(posList[posLen]), ln);
+        posLen++;
+    }
+    fclose(pts);
+    
+    //Randomize point list
+    
+    srand(time(NULL));
+    //printf("%d\n", rand() % posLen);
+    
+    int pos1, pos2;
+    Position p;
+    for(int i = 0; i < 100; i++){
+        pos1 = rand() % posLen;
+        pos2 = rand() % posLen;
+        p = posList[pos1];
+        posList[pos1] = posList[pos2];
+        posList[pos2] = p;
+    }
+    while(!isWellOrdered(posList)){
+        pos1 = rand() % posLen;
+        pos2 = rand() % posLen;
+        p = posList[pos1];
+        posList[pos1] = posList[pos2];
+        posList[pos2] = p;
+    }
+    
+    //Initialize Window
     glutInit( &argc, argv );
     glutInitWindowSize(1000, 1000);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
@@ -110,7 +179,6 @@ int main( int argc, char **argv )
 	f_prof = cgGLGetLatestProfile(CG_GL_FRAGMENT); 
 	v_prof = cgGLGetLatestProfile(CG_GL_VERTEX);
 	printf("%d, %d\n", f_prof, v_prof);
-    chdir("/Users/peter/Desktop/CG/cgtest");
     julia = cgCreateProgramFromFile(context, CG_SOURCE, "Julia.cg", f_prof, "main", NULL);
     newton = cgCreateProgramFromFile(context, CG_SOURCE, "Newton.cg", f_prof, "main", NULL);
     mandel = cgCreateProgramFromFile(context, CG_SOURCE, "Mandel.cg", f_prof, "main", NULL);
@@ -129,31 +197,29 @@ int main( int argc, char **argv )
     cgGLEnableProfile(v_prof);
     printf("%s\n", cgGetErrorString(cgGetError()));
 	
-	Position demoList[7];
-	fillPoint(&demoList[0], 0.297205, 0.063085, 0.001157, 1.012991, 15.0, 7);
-	fillPoint(&demoList[1], 0.134370, 0.042840, 0.043976, 1.008928, 15.0, 7);
-	fillPoint(&demoList[2], -0.129831, -0.637758, 0.507148, 1.103996, 15.0, 7);
-	fillPoint(&demoList[3], -0.162030, -1.02009, 0.041826, 0.983991, 15.0, 7);
-	fillPoint(&demoList[4], -0.139263, -1.846086, 0.002345, 0.516934, 15.0, 7);
-	fillPoint(&demoList[5], -0.138215, -1.910406, 0.001638, 0.495934, 15.0, 7);
-	fillPoint(&demoList[6], -0.138215, -3.552904, 0.302149, 0.149937, 15.0, 7);
-	
-	posList = demoList;
-	zoom = 0.001157;
-	
+    if(posLen > 0){
+        Position pos = posList[0];
+        centerX = pos.px;
+        centerY = pos.py;
+        zoom = pos.z;
+        var1 = pos.v1;
+    }
+    
     glutMainLoop();
     return 0;
 }
 
-void debugPrint()
+void huntPrint()
 {
 	printf("Position: %f, %f\n", centerX, centerY);
 	printf("Zoom: %f\n", zoom);
 	printf("Var1: %f\n", var1);
+    fprintf(pts, "%d: %f %f %f %f\n", ++posLen, centerX, centerY, zoom, var1);
 }
 
 void keyAction(unsigned char key, int x, int y)
 {
+    
     switch (key) {
         case ';':
             zoomIn = true;
@@ -212,8 +278,29 @@ void keyAction(unsigned char key, int x, int y)
 			break;
 			
 		case ' ':
-			debugPrint();
+            if(hunting)
+                huntPrint();
 			break;
+            
+        case 'h':
+            h1 = true;
+            break;
+            
+        case 'u':
+            h2 = h1;
+            break;
+        
+        case 'n':
+            h3 = h2;
+            break;
+            
+        case 't':
+            if(!hunting && h3){
+                printf("Point hunting activated!\n");
+                pts = fopen(fileName, "a");
+                hunting = true;
+            }
+            break;
             
         default:
             break;
@@ -343,24 +430,47 @@ void mouseMove(int x, int y)
 void updateCamera()
 {
 	Position pos = posList[posIndex];
-	if(pos.listLen > posIndex + 1)
-	{
-		Position posNext = posList[posIndex + 1];
-		float prog = delta / pos.time;
-		//prog *= pow(zoom, 0.3);
-		float progN = 1.0 - prog;
-		centerX = prog * posNext.px + progN * pos.px;
-		centerY = prog * posNext.py + progN * pos.py;
-		zoom = prog * posNext.z + progN * pos.z;
-		var1 = prog * posNext.v1 + progN * pos.v1;
-		
-		if(prog >= 1.0)
-		{
-			printf("Point Reached: %d\n", posIndex);
-			delta = 0.0;
-			posIndex += 1;
-		}
-	}
+    Position posNext = posList[posIndex + 1];
+    float prog = delta / ptTime;
+    prog = pow(prog, 1.0 / (38.0*zoom));
+    float progN = 1.0 - prog;
+    centerX = prog * posNext.px + progN * pos.px;
+    centerY = prog * posNext.py + progN * pos.py;
+    var1 = prog * posNext.v1 + progN * pos.v1;
+    
+    zoom = prog * posNext.z + progN * pos.z;
+    
+    if(prog >= 1.0)
+    {
+        printf("Point Reached: %f %f %f %f\n", posNext.px, posNext.py, posNext.z, posNext.v1);
+        delta = 0.0;
+        posIndex += 1;
+    }
+    
+    //Suppose we try a different approach, based more on consistent steady movement
+    
+//    float disX, disY, disZ, disV;
+//    disX = posNext.px - centerX;
+//    disY = posNext.py - centerY;
+//    disV = posNext.v1 - var1;
+//    disZ = posNext.z / zoom;
+//
+//    if(abs(disX) > zoom)
+//        centerX += 0.1*zoom * disX / (abs(disX));
+//    if(abs(disY) > zoom)
+//        centerY += 0.1*zoom * disY / (abs(disY));
+//    if(abs(1 - disZ) > 0.001)
+//        zoom += 0.1*zoom * disZ / (abs(disZ));
+//    if(abs(disV) > zoom)
+//        var1 += zoom * disV / (abs(disV));
+//    
+//    if(abs(disX) + abs(disY) + abs(disV) + abs(1 - disZ) < 0.001)
+//    {
+//        printf("Point Reached: %f %f %f %f\n", posNext.px, posNext.py, posNext.z, posNext.v1);
+//        delta = 0.0;
+//        posIndex += 1;
+//    }
+    
 }
 
 void OnIdle(void)
@@ -408,9 +518,10 @@ void OnIdle(void)
 	else if(var2down){
 		var2 -= 0.001;
 	}
-    //sleep(0.016);
+    sleep(0.1);
 	
-	updateCamera();
+    if(posIndex + 1 < posLen && !hunting)
+        updateCamera();
 	
     glutPostRedisplay();
 }
