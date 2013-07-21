@@ -28,6 +28,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D007B44A179B025C00513CE5 /* cg_1_2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_1_2.txt; sourceTree = "<group>"; };
+		D007B44B179B05FF00513CE5 /* cg_0_1.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_0_1.cg; sourceTree = "<group>"; };
+		D007B44C179B271800513CE5 /* cg_1_2.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_1_2.cg; sourceTree = "<group>"; };
+		D007B44D179B3B6D00513CE5 /* cg_2_3.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_2_3.cg; sourceTree = "<group>"; };
+		D007B44E179B3B7800513CE5 /* cg_2_3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_2_3.txt; sourceTree = "<group>"; };
 		D04724B3179700A000477CFC /* changes.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.log; sourceTree = "<group>"; };
 		D0AD25A117978F95001BEDEC /* GenIter.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GenIter.cg; sourceTree = "<group>"; };
 		D104A5F51794792E006BF235 /* cgtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgtest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,6 +68,11 @@
 		D104A5EC1794792E006BF235 = {
 			isa = PBXGroup;
 			children = (
+				D007B44E179B3B7800513CE5 /* cg_2_3.txt */,
+				D007B44D179B3B6D00513CE5 /* cg_2_3.cg */,
+				D007B44C179B271800513CE5 /* cg_1_2.cg */,
+				D007B44B179B05FF00513CE5 /* cg_0_1.cg */,
+				D007B44A179B025C00513CE5 /* cg_1_2.txt */,
 				D191BB831799E47D007F1040 /* cg_0_1.txt */,
 				D191BB811799DB78007F1040 /* ptsList.txt */,
 				D04724B3179700A000477CFC /* changes.log */,

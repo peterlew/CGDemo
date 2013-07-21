@@ -28,6 +28,7 @@ CGprogram gen;
 CGprogram pass;
 float delta = 0.0;
 float _w, _h;
+int winSze = 500;
 float mouseX = 1.0;
 float mouseY = 1.0;
 bool mouse_l_down = false;
@@ -68,6 +69,11 @@ bool hunting = false;
 
 bool h1, h2, h3 = false;
 
+bool fadeStart = true;
+
+int curScene1, curScene2;
+int numScenes;
+
 CGprofile f_prof, v_prof;
 
 struct Position{
@@ -91,13 +97,16 @@ void fillPoint(Position *p, char *s)
 	p->v1 = atof(s + i);
 }
 
-Position posList[20];
+Position posList[25];
 int posIndex = 0;
 int posLen = 0;
-float ptTime = 5.0;
+float ptTime = 3.0;
 
 FILE *pts;
 char fileName[11];
+char progName[10];
+
+CGcontext context;
 
 //a sanity check - two high-zoom points shouldn't be adjacent unless they're very close
 bool isWellOrdered(Position *pl)
@@ -112,32 +121,99 @@ bool isWellOrdered(Position *pl)
     return true;
 }
 
-int main( int argc, char **argv )
+void newScenes(int sc1, int sc2)
 {
-    //Populate point list, pick scenes
-    
-    int scene1 = 0;
-    int scene2 = 1;
-    
-    sprintf(fileName, "cg_%d_%d.txt", scene1, scene2);
+    sprintf(fileName, "cg_%d_%d.txt", sc1, sc2);
     fileName[10] = '\0';
     
-    chdir("/Users/plewis/Desktop/CGDemo");
     if((pts = fopen(fileName, "r")) == NULL){
         printf("Couldn't open file: %s\n", fileName);
         exit(EXIT_FAILURE);
     }
     char *ln;
     size_t sz;
+	posLen = 0;
     while((ln = fgetln(pts, &sz)) != NULL)
     {
         fillPoint(&(posList[posLen]), ln);
         posLen++;
     }
     fclose(pts);
+	
+	sprintf(progName, "cg_%d_%d.cg", sc1, sc2);
+	cgGLUnbindProgram(f_prof);
+	cgGLEnableProfile(f_prof);
+	gen = cgCreateProgramFromFile(context, CG_SOURCE, progName, f_prof, "main", NULL);
+	cgGLLoadProgram(gen);
+	cgGLBindProgram(gen);
+	cgGLEnableProfile(f_prof);
+}
+
+int main( int argc, char **argv )
+{    
+    //Initialize Window
+    glutInit( &argc, argv );
+    glutInitWindowSize(winSze, winSze);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+    glutCreateWindow("Fractal Shader");
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutMotionFunc(mouseMove);
+    glutMouseFunc(mouseAction);
+    glutIdleFunc(OnIdle);
+    glutKeyboardFunc(keyAction);
+    glutKeyboardUpFunc(keyUp);
+    glClearColor(0, 0, 0, 1);
+    context = cgCreateContext();
+    if(context == NULL){
+        printf("Failed to create CGcontext\n");
+        return 1;
+    }
+	
+	//Profile set-up
+	f_prof = cgGLGetLatestProfile(CG_GL_FRAGMENT); 
+	v_prof = cgGLGetLatestProfile(CG_GL_VERTEX);
+    cgGLEnableProfile(f_prof);
+    cgGLEnableProfile(v_prof);
+	/*
+	printf("%d, %d\n", f_prof, v_prof);
+    julia = cgCreateProgramFromFile(context, CG_SOURCE, "Julia.cg", f_prof, "main", NULL);
+    newton = cgCreateProgramFromFile(context, CG_SOURCE, "Newton.cg", f_prof, "main", NULL);
+    mandel = cgCreateProgramFromFile(context, CG_SOURCE, "Mandel.cg", f_prof, "main", NULL);
+    ship = cgCreateProgramFromFile(context, CG_SOURCE, "Ship.cg", f_prof, "main", NULL);
+    pass = cgCreateProgramFromFile(context, CG_SOURCE, "Pass.cg", v_prof, "main", NULL);
+	gen = cgCreateProgramFromFile(context, CG_SOURCE, "GenIter.cg", f_prof, "main", NULL);
+    printf("%s\n", cgGetErrorString(cgGetError()));
+    cgGLLoadProgram(julia);
+    cgGLLoadProgram(newton);
+    cgGLLoadProgram(mandel);
+    cgGLLoadProgram(ship);
+	cgGLLoadProgram(gen);
+    cgGLLoadProgram(pass);
+    //printf("%s\n", cgGetErrorString(cgGetError()));
+    cgGLEnableProfile(f_prof);
+    cgGLEnableProfile(v_prof);
+    printf("%s\n", cgGetErrorString(cgGetError()));
+	*/
+	
+	//Use throughput vertex shader
+    chdir("/Users/peter/Desktop/CGDemo");
+    pass = cgCreateProgramFromFile(context, CG_SOURCE, "Pass.cg", v_prof, "main", NULL);
+	cgGLLoadProgram(pass);
+    cgGLBindProgram(pass);
+    cgGLSetParameter1f(cgGetNamedParameter(pass, "startX"), -1);
+    cgGLSetParameter1f(cgGetNamedParameter(pass, "endX"), 1);
+    cgGLSetParameter1f(cgGetNamedParameter(pass, "startY"), -1);
+    cgGLSetParameter1f(cgGetNamedParameter(pass, "endY"), 1);
+   
+	 //Pick scenes
+	curScene1 = 0;
+	curScene2 = 1;
+	numScenes = 3;
+	newScenes(curScene1, curScene2);
     
     //Randomize point list
-    
+    /*
     srand(time(NULL));
     //printf("%d\n", rand() % posLen);
     
@@ -157,45 +233,9 @@ int main( int argc, char **argv )
         posList[pos1] = posList[pos2];
         posList[pos2] = p;
     }
-    
-    //Initialize Window
-    glutInit( &argc, argv );
-    glutInitWindowSize(1000, 1000);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-    glutCreateWindow("Fractal Shader");
-    glutDisplayFunc(display);
-    glutReshapeFunc(reshape);
-    glutMotionFunc(mouseMove);
-    glutMouseFunc(mouseAction);
-    glutIdleFunc(OnIdle);
-    glutKeyboardFunc(keyAction);
-    glutKeyboardUpFunc(keyUp);
-    glClearColor(0, 0, 0, 1);
-    CGcontext context = cgCreateContext();
-    if(context == NULL){
-        printf("Failed to create CGcontext\n");
-        return 1;
-    }
-	f_prof = cgGLGetLatestProfile(CG_GL_FRAGMENT); 
-	v_prof = cgGLGetLatestProfile(CG_GL_VERTEX);
-	printf("%d, %d\n", f_prof, v_prof);
-    julia = cgCreateProgramFromFile(context, CG_SOURCE, "Julia.cg", f_prof, "main", NULL);
-    newton = cgCreateProgramFromFile(context, CG_SOURCE, "Newton.cg", f_prof, "main", NULL);
-    mandel = cgCreateProgramFromFile(context, CG_SOURCE, "Mandel.cg", f_prof, "main", NULL);
-    ship = cgCreateProgramFromFile(context, CG_SOURCE, "Ship.cg", f_prof, "main", NULL);
-    pass = cgCreateProgramFromFile(context, CG_SOURCE, "Pass.cg", v_prof, "main", NULL);
-	gen = cgCreateProgramFromFile(context, CG_SOURCE, "GenIter.cg", f_prof, "main", NULL);
-    printf("%s\n", cgGetErrorString(cgGetError()));
-    cgGLLoadProgram(julia);
-    cgGLLoadProgram(newton);
-    cgGLLoadProgram(mandel);
-    cgGLLoadProgram(ship);
-	cgGLLoadProgram(gen);
-    cgGLLoadProgram(pass);
-    //printf("%s\n", cgGetErrorString(cgGetError()));
-    cgGLEnableProfile(f_prof);
-    cgGLEnableProfile(v_prof);
-    printf("%s\n", cgGetErrorString(cgGetError()));
+	*/
+	
+	//cgGLBindProgram(gen);
 	
     if(posLen > 0){
         Position pos = posList[0];
@@ -373,8 +413,8 @@ void keyUp(unsigned char key, int x, int y)
 
 void updateMouse(int x, int y, float *nx, float *ny)
 {
-    *nx = (float)x / 500.0 - 1.0;
-    *ny = -1*((float)y / 500.0 - 1.0);
+    *nx = (float)x * 2.0 / (float)winSze - 1.0;
+    *ny = -1*((float)y * 2.0 / (float)winSze - 1.0);
 }
 
 void mouseAction(int button, int state, int x, int y)
@@ -432,7 +472,7 @@ void updateCamera()
 	Position pos = posList[posIndex];
     Position posNext = posList[posIndex + 1];
     float prog = delta / ptTime;
-    prog = pow(prog, 1.0 / (38.0*zoom));
+    //prog = pow(prog, 1.0 / (38.0*zoom));
     float progN = 1.0 - prog;
     centerX = prog * posNext.px + progN * pos.px;
     centerY = prog * posNext.py + progN * pos.py;
@@ -442,7 +482,8 @@ void updateCamera()
     
     if(prog >= 1.0)
     {
-        printf("Point Reached: %f %f %f %f\n", posNext.px, posNext.py, posNext.z, posNext.v1);
+		printf("Point %d Reached\n", posIndex + 2);
+        //printf("Point Reached: %f %f %f %f\n", posNext.px, posNext.py, posNext.z, posNext.v1);
         delta = 0.0;
         posIndex += 1;
     }
@@ -475,7 +516,12 @@ void updateCamera()
 
 void OnIdle(void)
 {
-    delta += 0.016;
+    if(fadeStart){
+		delta += 0.0001;
+		if(centerX < 0.29)
+			fadeStart = false;
+	}
+	else delta += 0.002;
     if(zoomIn){
         zoom *= 0.99;
     }
@@ -520,8 +566,19 @@ void OnIdle(void)
 	}
     sleep(0.1);
 	
-    if(posIndex + 1 < posLen && !hunting)
-        updateCamera();
+	if(!hunting){
+		if(posIndex + 1 < posLen)
+			updateCamera();
+		else if(curScene2 < numScenes){
+			delta = 0.0;
+			posIndex = 0;
+			var1 = 0.0;
+			curScene1++;
+			curScene2++;
+			printf("Changing to scenes %d, %d\n", curScene1, curScene2);
+			newScenes(curScene1, curScene2);
+		}
+	}
 	
     glutPostRedisplay();
 }
@@ -529,27 +586,22 @@ void OnIdle(void)
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT);    
-    cgGLBindProgram(pass);
-    cgGLSetParameter1f(cgGetNamedParameter(pass, "startX"), -1);
-    cgGLSetParameter1f(cgGetNamedParameter(pass, "endX"), 1);
-    cgGLSetParameter1f(cgGetNamedParameter(pass, "startY"), -1);
-    cgGLSetParameter1f(cgGetNamedParameter(pass, "endY"), 1);
-	cgGLSetParameter1f(cgGetNamedParameter(julia, "zoom"), zoom);
-	cgGLSetParameter2f(cgGetNamedParameter(julia, "zc"), centerX, centerY);
-    cgGLSetParameter2f(cgGetNamedParameter(julia, "c"), mouseX, mouseY);
-    cgGLSetParameter2f(cgGetNamedParameter(ship, "c"), mouseX, mouseY);
-    cgGLSetParameter2f(cgGetNamedParameter(ship, "zc"), centerX, centerY);
-    cgGLSetParameter1f(cgGetNamedParameter(ship, "delta"), 5*delta);
-    cgGLSetParameter1f(cgGetNamedParameter(ship, "zoom"), zoom);
-    cgGLSetParameter1f(cgGetNamedParameter(newton, "zoom"), zoom);
-    cgGLSetParameter2f(cgGetNamedParameter(newton, "f"), mouseX, mouseY);
-    cgGLSetParameter2f(cgGetNamedParameter(newton, "zc"), centerX, centerY);
-	cgGLSetParameter1f(cgGetNamedParameter(mandel, "zoom"), zoom);
-	cgGLSetParameter2f(cgGetNamedParameter(mandel, "zc"), centerX, centerY);
-	cgGLSetParameter1f(cgGetNamedParameter(gen, "zoom"), zoom);
-	cgGLSetParameter2f(cgGetNamedParameter(gen, "zc"), centerX, centerY);
-	cgGLSetParameter1f(cgGetNamedParameter(gen, "var1"), var1);
-	cgGLSetParameter1f(cgGetNamedParameter(gen, "var2"), var2);
+//	cgGLSetParameter1f(cgGetNamedParameter(julia, "zoom"), zoom);
+//	cgGLSetParameter2f(cgGetNamedParameter(julia, "zc"), centerX, centerY);
+//    cgGLSetParameter2f(cgGetNamedParameter(julia, "c"), mouseX, mouseY);
+//    cgGLSetParameter2f(cgGetNamedParameter(ship, "c"), mouseX, mouseY);
+//    cgGLSetParameter2f(cgGetNamedParameter(ship, "zc"), centerX, centerY);
+//    cgGLSetParameter1f(cgGetNamedParameter(ship, "delta"), 5*delta);
+//    cgGLSetParameter1f(cgGetNamedParameter(ship, "zoom"), zoom);
+//    cgGLSetParameter1f(cgGetNamedParameter(newton, "zoom"), zoom);
+//    cgGLSetParameter2f(cgGetNamedParameter(newton, "f"), mouseX, mouseY);
+//    cgGLSetParameter2f(cgGetNamedParameter(newton, "zc"), centerX, centerY);
+//	cgGLSetParameter1f(cgGetNamedParameter(mandel, "zoom"), zoom);
+//	cgGLSetParameter2f(cgGetNamedParameter(mandel, "zc"), centerX, centerY);
+//	cgGLSetParameter1f(cgGetNamedParameter(gen, "zoom"), zoom);
+//	cgGLSetParameter2f(cgGetNamedParameter(gen, "zc"), centerX, centerY);
+//	cgGLSetParameter1f(cgGetNamedParameter(gen, "var1"), var1);
+//	cgGLSetParameter1f(cgGetNamedParameter(gen, "var2"), var2);
 	/*
     //General shader viewer
     cgGLBindProgram(newton);
@@ -577,14 +629,12 @@ void display()
 	cgGLSetParameter2f(cgGetNamedParameter(gen, "zc"), centerX, centerY);
 	cgGLSetParameter1f(cgGetNamedParameter(gen, "var1"), var1);
 	cgGLSetParameter1f(cgGetNamedParameter(gen, "var2"), var2);
-	cgGLBindProgram(gen);
     glBegin(GL_QUADS);
     glVertex2f(-1, -1);
     glVertex2f(1, -1);
     glVertex2f(1, 1);
     glVertex2f(-1, 1);
     glEnd();
-	glDisable(GL_BLEND);
 	
     /*
     //Mandelbrot viewer with mini Julia set

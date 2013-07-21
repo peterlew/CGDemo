@@ -1,0 +1,56 @@
+struct output{
+	float4 color : COLOR;
+};
+
+float2 mult(float2 v1, float2 v2)
+{
+    return float2(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
+}
+
+float2 div(float2 v1, float2 v2)
+{
+	float d = v2.x * v2.x + v2.y * v2.y;
+	return vec2( ( v1.x * v2.x + v1.y * v2.y ) / d,
+			    ( v1.y * v2.x - v1.x * v2.y ) / d );
+}
+
+float2 func1(float2 p, float2 c)
+{
+	return float2(p.x * p.x * p.x - p.y * p.x * p.y + c.x, 2.0 *p.x* p.x * p.y + c.y);
+}
+
+float2 func2(float2 p, float2 c)
+{
+	return p - div(mult(mult(p,p),p) - 1.0, 2.0 * mult(p,p));
+}
+
+output main(float4 color : COLOR, float4 position : POSITION, float4 texCoord : TEXCOORD, uniform float zoom, uniform float2 zc, uniform float var1, uniform float var2)
+{
+	output OUT;
+	
+	float2 p = zoom * texCoord.xy + zc;
+	float2 c = float2(p);
+	float2 c0 = float2(0.2499, 0);
+	float count = 0.0;
+	float eps = 0.1;
+	float len;
+	float fact = 1.01;
+	float inv1 = 1.0 - var1;
+	float iter = 10.0;
+
+	while(count < iter)
+	{
+		len = dot(p,p);
+		if(len > 5*var1 + 250.0 * inv1)
+			break;
+		p = var1*func1(p, c)+ inv1 * mult(float2(var1*6.0 + 5*(fact-1.0), 0),  func2(p, c));
+		count += 1.0;
+	}
+	float col = 1.0 - count / iter;
+	len /= 50.0;
+	OUT.color.g = inv1*len;
+	OUT.color.b = var1*abs(p.x)/30.0;
+	OUT.color.r = var1*abs(p.y)/30.0;
+
+	return OUT;
+}
