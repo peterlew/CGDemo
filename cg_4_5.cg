@@ -1,0 +1,49 @@
+struct output{
+	float4 color : COLOR;
+};
+
+float2 func1(float2 p, float2 c)
+{
+	return float2(p.x * p.x - p.y * p.y + c.x, 2 * p.x * p.y + c.y);
+}
+
+float2 func2(float2 p, float2 c)
+{
+	p.x = abs(p.x);
+	p.y = -abs(p.y);
+	return float2(p.x * p.x - p.y * p.y + c.x, 2.0 * p.x * p.y + c.y);
+}
+
+output main(float4 color : COLOR, float4 position : POSITION, float4 texCoord : TEXCOORD, uniform float zoom, uniform float2 zc, uniform float var1, uniform float var2)
+{
+	output OUT;
+	
+	float2 p = zoom * texCoord.xy + zc;
+	float2 c = float2(p);
+	float2 c0 = float2(0.2499, 0);
+	float count = 0.0;
+	float eps = 0.1;
+	float len;
+	float fact = 1.01;
+	float inv1 = 1.0 - var1;
+	float iter = 30.0;
+
+	while(count < iter)
+	{
+		len = dot(p,p);
+		if(len > 5)
+			break;
+		p = var1*func1(p, c) + inv1*func2(p, c);
+		count += 1.0;
+	}
+	float col = 1.0 - count / iter;
+	float col2 = count + 1 - log(log(len)) / log(2.0);
+	col2 = 1.0 - col2 / iter;
+	len /= 100.0;
+	float tAdd = 0.1*(sin(var2) + 0.8);
+	OUT.color.g = var1*col2 +inv1*(len*col/2 - tAdd);
+	OUT.color.b = var1*col2 +inv1*(p.x/5.0 + tAdd/2);
+	OUT.color.r = var1*col + inv1*(p.y + tAdd);
+
+	return OUT;
+}

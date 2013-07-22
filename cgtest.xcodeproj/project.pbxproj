@@ -37,6 +37,10 @@
 		D0AD25A117978F95001BEDEC /* GenIter.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GenIter.cg; sourceTree = "<group>"; };
 		D0D74943179C9F9600B73D01 /* cg_3_4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_3_4.txt; sourceTree = "<group>"; };
 		D0D74944179C9FB500B73D01 /* cg_3_4.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_3_4.cg; sourceTree = "<group>"; };
+		D0D74945179CCC9C00B73D01 /* cg_4_5.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_4_5.cg; sourceTree = "<group>"; };
+		D0D74946179CCCA800B73D01 /* cg_4_5.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_4_5.txt; sourceTree = "<group>"; };
+		D0D74947179CEE3F00B73D01 /* cg_5_6.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_5_6.txt; sourceTree = "<group>"; };
+		D0D74948179CEE4A00B73D01 /* cg_5_6.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_5_6.cg; sourceTree = "<group>"; };
 		D104A5F51794792E006BF235 /* cgtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D104A5F81794792E006BF235 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D104A5FA1794792E006BF235 /* cgtest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = cgtest.1; sourceTree = "<group>"; };
@@ -70,6 +74,10 @@
 		D104A5EC1794792E006BF235 = {
 			isa = PBXGroup;
 			children = (
+				D0D74948179CEE4A00B73D01 /* cg_5_6.cg */,
+				D0D74947179CEE3F00B73D01 /* cg_5_6.txt */,
+				D0D74946179CCCA800B73D01 /* cg_4_5.txt */,
+				D0D74945179CCC9C00B73D01 /* cg_4_5.cg */,
 				D0D74944179C9FB500B73D01 /* cg_3_4.cg */,
 				D0D74943179C9F9600B73D01 /* cg_3_4.txt */,
 				D007B44E179B3B7800513CE5 /* cg_2_3.txt */,

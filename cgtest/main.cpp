@@ -28,7 +28,8 @@ CGprogram gen;
 CGprogram pass;
 float delta = 0.0;
 float _w, _h;
-int winSze = 500;
+int winSze = 1000;
+float speed = 0.008;
 float mouseX = 1.0;
 float mouseY = 1.0;
 bool mouse_l_down = false;
@@ -209,7 +210,7 @@ int main( int argc, char **argv )
 	 //Pick scenes
 	curScene1 = 0;
 	curScene2 = 1;
-	numScenes = 4;
+	numScenes = 6;
 	newScenes(curScene1, curScene2);
     
     //Randomize point list
@@ -341,6 +342,13 @@ void keyAction(unsigned char key, int x, int y)
                 hunting = true;
             }
             break;
+			
+		case '.':
+			posIndex++;
+			break;
+			
+		case ',':
+			posIndex > 0 ? posIndex-- : 1;
             
         default:
             break;
@@ -520,12 +528,12 @@ void updateCamera()
 void OnIdle(void)
 {
     if(fadeStart){
-		delta += 0.0001;
+		delta += speed/20;
 		if(centerX < 0.29)
 			fadeStart = false;
 	}
-	else delta += 0.002;
-	var2 += 0.004;
+	else delta += speed;
+	var2 += 2*speed;
     if(zoomIn){
         zoom *= 0.99;
     }
