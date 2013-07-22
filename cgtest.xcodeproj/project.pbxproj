@@ -35,6 +35,8 @@
 		D007B44E179B3B7800513CE5 /* cg_2_3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_2_3.txt; sourceTree = "<group>"; };
 		D04724B3179700A000477CFC /* changes.log */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = changes.log; sourceTree = "<group>"; };
 		D0AD25A117978F95001BEDEC /* GenIter.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GenIter.cg; sourceTree = "<group>"; };
+		D0D74943179C9F9600B73D01 /* cg_3_4.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_3_4.txt; sourceTree = "<group>"; };
+		D0D74944179C9FB500B73D01 /* cg_3_4.cg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cg_3_4.cg; sourceTree = "<group>"; };
 		D104A5F51794792E006BF235 /* cgtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = cgtest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D104A5F81794792E006BF235 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		D104A5FA1794792E006BF235 /* cgtest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = cgtest.1; sourceTree = "<group>"; };
@@ -68,6 +70,8 @@
 		D104A5EC1794792E006BF235 = {
 			isa = PBXGroup;
 			children = (
+				D0D74944179C9FB500B73D01 /* cg_3_4.cg */,
+				D0D74943179C9F9600B73D01 /* cg_3_4.txt */,
 				D007B44E179B3B7800513CE5 /* cg_2_3.txt */,
 				D007B44D179B3B6D00513CE5 /* cg_2_3.cg */,
 				D007B44C179B271800513CE5 /* cg_1_2.cg */,

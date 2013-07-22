@@ -55,7 +55,7 @@ bool mouseU = false;
 bool mouseD = false;
 
 float var1 = 0.0;
-float var2 = 10;
+float var2 = 0.0;
 float var3 = 0.0;
 
 bool var1up = false;
@@ -209,7 +209,7 @@ int main( int argc, char **argv )
 	 //Pick scenes
 	curScene1 = 0;
 	curScene2 = 1;
-	numScenes = 3;
+	numScenes = 4;
 	newScenes(curScene1, curScene2);
     
     //Randomize point list
@@ -471,8 +471,11 @@ void updateCamera()
 {
 	Position pos = posList[posIndex];
     Position posNext = posList[posIndex + 1];
-    float prog = delta / ptTime;
-    //prog = pow(prog, 1.0 / (38.0*zoom));
+	float prog = delta / ptTime;
+    if(curScene1 == 3)
+		prog = 0.5*(1 - cos(M_PI*prog));
+    //prog = 0.5*(cbrt(2.0*prog - 1.0) + 1.0);
+	//prog = pow(prog, 1.0 / (38.0*zoom));
     float progN = 1.0 - prog;
     centerX = prog * posNext.px + progN * pos.px;
     centerY = prog * posNext.py + progN * pos.py;
@@ -480,7 +483,7 @@ void updateCamera()
     
     zoom = prog * posNext.z + progN * pos.z;
     
-    if(prog >= 1.0)
+    if(prog >= 0.999)
     {
 		printf("Point %d Reached\n", posIndex + 2);
         //printf("Point Reached: %f %f %f %f\n", posNext.px, posNext.py, posNext.z, posNext.v1);
@@ -522,6 +525,7 @@ void OnIdle(void)
 			fadeStart = false;
 	}
 	else delta += 0.002;
+	var2 += 0.004;
     if(zoomIn){
         zoom *= 0.99;
     }

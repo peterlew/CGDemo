@@ -39,22 +39,9 @@ For next week's demo:
 		Rotation
 		Location
 		
-SCENE 1:
-	Mandel / Newton
-	Three passes 
-		RGB
-		Varying multiplier
-	Start (Red Dot)
-		P:  0.297205, 0.063085
-		Z:  0.001157
-		V1: 1.012991
-	Move Left (to Above Interest)
-		P:  -0.129831, -0.637758
-		Z:	0.507148
-		V1:	1.103996
-	Zoom in
-		P:	-0.162030, -1.02009
-		Z:	0.041826
-		V1:	0.983991
+Challenges: 
+	Would be really nice to smoothly change iteration count, but the cg 
+	compiler has to be able to unroll the 'while'
+	
 		
 		
