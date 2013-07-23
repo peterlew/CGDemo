@@ -28,8 +28,8 @@ CGprogram gen;
 CGprogram pass;
 float delta = 0.0;
 float _w, _h;
-int winSze = 1000;
-float speed = 0.008;
+int winSze = 500;
+float speed = 0.002;
 float mouseX = 1.0;
 float mouseY = 1.0;
 bool mouse_l_down = false;
@@ -576,7 +576,7 @@ void OnIdle(void)
 	else if(var2down){
 		var2 -= 0.001;
 	}
-    sleep(0.1);
+    //sleep(0.1);
 	
 	if(!hunting){
 		if(posIndex + 1 < posLen)
